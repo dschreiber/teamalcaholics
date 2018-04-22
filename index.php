@@ -1,5 +1,7 @@
 <?php
 
+include ('db_init.php');
+
 
 // Are we at the homepage? If not, redirect
 
@@ -19,6 +21,7 @@ if ((!$page['page']) or (!$page['section'])) {
     $page['section'] = 'home';
 }
 
+$page['controller'] = 'ctrl/' . $page['section'] . '/' . $page['page'] . '.php';
 $page['template'] = 'tmpl/' . $page['section'] . '/' . $page['page'] . '.tmpl';
 
 ?>
@@ -65,7 +68,10 @@ $page['template'] = 'tmpl/' . $page['section'] . '/' . $page['page'] . '.tmpl';
       
       <!-- Start Page Content -->
 <?php
-  include($page['template']);
+    if (file_exists($page['controller'])) {
+        include($page['controller']);
+    }
+    include($page['template']);
 ?>
       
 
