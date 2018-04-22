@@ -1,5 +1,7 @@
 <?php
 
+global $pdo;
+
 $host = 'teamalcaholics.com';
 $user = 'root';
 $pass = 'pwd';
