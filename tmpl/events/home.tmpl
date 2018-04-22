@@ -5,32 +5,53 @@
             <i class="fa fa-newspaper-o"></i> Upcoming Events</div>
           <hr class="mt-2">
 
-          <div class="card-columns">
+          <div class="card-deck">
+              <div class="row">
               
 <?php
 
-while ($event = $events->fetch()) {
+foreach ($events as $event) {
+    $count++;
+    $start = strtotime($event['event_start']);
+    $end = strtotime($event['event_end']);
+    $duration = $end - $start;
+    
+    // Is the event more than 24 hours?
+    if ($end - $start > 86400) {
+        $event_duration = date('D M jS, Y', $start) . ' thru <br>' . date('D M jS, Y', $end);
+    } else {
+        $event_duration = date('D M jS, Y', $start) . '<br>' . date('g:ia', $start) . ' thru ' . date('g:ia', $end);
+    }
+    
 echo <<<TMPL
             <!-- Event Item -->
             <div class="card mb-3">
               <a href="#">
-                <img class="card-img-top img-fluid w-100" src="https://unsplash.it/700/450?image=610" alt="">
+                <img class="card-img-top w-100" src="images.php?event_id=$event[event_id]" alt="" height="140px">
               </a>
               <div class="card-body">
                 <h6 class="card-title mb-1">
                     <a href="#">$event[event_name]</a>
                 </h6>
                 <p class="card-text small">
-                    $event[event_description]
+                    $event[event_short_description]
                 </p>
               </div>
+        
+              <!-- Dates -->
+              <hr class="my-0">
+              <div class="card-body py-2 small text-center">
+                  $event_duration
+              </div>
+        
+              <!-- RSVP -->
               <hr class="my-0">
               <div class="card-body py-2 small">
-                <a class="mr-3 d-inline-block" href="#">
+                <a class="mr-3 d-inline-block text-primary" href="#">
                   <i class="fa fa-fw fa-thumbs-up"></i>Coming</a>
-                <a class="mr-3 d-inline-block" href="#">
+                <a class="mr-3 d-inline-block text-muted" href="#">
                   <i class="fa fa-fw fa-thumbs-down"></i>Can't Go</a>
-                <a class="d-inline-block" href="#">
+                <a class="d-inline-block text-muted" href="#">
                   <i class="fa fa-fw fa-share"></i>Learn More</a>
               </div>
 
@@ -38,11 +59,30 @@ echo <<<TMPL
             </div>
 
 TMPL;
+
+    if ($count % 2 == 0) {
+        echo <<<TMPL
+        </div>
+        <div class="row">
+TMPL;
+    }
+}
+
+if ($count % 2 != 0) {
+    echo <<<TMPL
+            <div class="card mb-3">
+              <div class="card-body">
+
+   &nbsp;
+    </div>
+</div>    
+TMPL;
 }
 
 ?>
 
 
+              </div>
               
 
           </div>
@@ -55,50 +95,40 @@ TMPL;
             <div class="card-header">
               <i class="fa fa-bell-o"></i> Event Calendar</div>
             <div class="list-group list-group-flush small">
+                
+<?php
+
+foreach ($events as $event) {
+    $start = strtotime($event['event_start']);
+    $end = strtotime($event['event_end']);
+    $duration = $end - $start;
+    
+    // Is the event more than 24 hours?
+    if ($end - $start > 86400) {
+        $event_duration = date('m/d/Y', $start) . ' - ' . date('m/d/Y', $end);
+    } else {
+        $event_duration = date('m/d/Y g:ia', $start);
+    }
+    
+    echo <<<TMPL
               <a class="list-group-item list-group-item-action" href="#">
                 <div class="media">
-                  <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="">
+                  <!--<img class="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="">-->
                   <div class="media-body">
-                    <strong>David Miller</strong>posted a new article to
-                    <strong>David Miller Website</strong>.
-                    <div class="text-muted smaller">Today at 5:43 PM - 5m ago</div>
+                    <strong>$event[event_name]</strong>
+                    <div class="text-muted smaller">$event_duration</div>
                   </div>
                 </div>
               </a>
-              <a class="list-group-item list-group-item-action" href="#">
-                <div class="media">
-                  <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="">
-                  <div class="media-body">
-                    <strong>Samantha King</strong>sent you a new message!
-                    <div class="text-muted smaller">Today at 4:37 PM - 1hr ago</div>
-                  </div>
-                </div>
-              </a>
-              <a class="list-group-item list-group-item-action" href="#">
-                <div class="media">
-                  <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="">
-                  <div class="media-body">
-                    <strong>Jeffery Wellings</strong>added a new photo to the album
-                    <strong>Beach</strong>.
-                    <div class="text-muted smaller">Today at 4:31 PM - 1hr ago</div>
-                  </div>
-                </div>
-              </a>
-              <a class="list-group-item list-group-item-action" href="#">
-                <div class="media">
-                  <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/45x45" alt="">
-                  <div class="media-body">
-                    <i class="fa fa-code-fork"></i>
-                    <strong>Monica Dennis</strong>forked the
-                    <strong>startbootstrap-sb-admin</strong>repository on
-                    <strong>GitHub</strong>.
-                    <div class="text-muted smaller">Today at 3:54 PM - 2hrs ago</div>
-                  </div>
-                </div>
-              </a>
-              <a class="list-group-item list-group-item-action" href="#">View all activity...</a>
+
+TMPL;
+}
+?>
+                
+
+              <!--<a class="list-group-item list-group-item-action" href="#">Download Calendar...</a>-->
             </div>
-            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+            <!--<div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>-->
           </div>
         </div>
       </div>

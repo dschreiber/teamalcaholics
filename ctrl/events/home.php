@@ -2,7 +2,8 @@
 
 global $pdo;
 
-$events = $pdo->prepare("SELECT * FROM event WHERE event_end >= ?");
+$sql = $pdo->prepare("SELECT * FROM event WHERE event_end >= ? ORDER BY event_start");
 $today = date('m/d/Y');
-$events->execute([$today]);
+$sql->execute([$today]);
 
+$events = $sql->fetchAll();
