@@ -17,9 +17,11 @@ echo <<<TMPL
                 <img class="card-img-top img-fluid w-100" src="https://unsplash.it/700/450?image=610" alt="">
               </a>
               <div class="card-body">
-                <h6 class="card-title mb-1"><a href="#">$event[event_name]</a></h6>
+                <h6 class="card-title mb-1">
+                    <a href="#">$event['event_name']</a>
+                </h6>
                 <p class="card-text small">
-        $event[event_description]
+                    $event['event_description'']
                 </p>
               </div>
               <hr class="my-0">
