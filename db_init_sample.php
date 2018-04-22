@@ -2,7 +2,7 @@
 
 global $pdo;
 
-$host = 'teamalcaholics.com';
+$host = 'localhost';
 $user = 'root';
 $pass = 'pwd';
 $db   = 'teamalcaholics';
