@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('America/Los_Angeles');
+
 include ('db_init.php');
 
 
