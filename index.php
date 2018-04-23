@@ -10,6 +10,17 @@ if (!$_SESSION['user_id']) {
     exit();
 }
 
+// Retrieve current user
+$sql = $pdo->prepare("SELECT * FROM user WHERE user_id = ?");
+$sql->execute([$_SESSION['user_id']]);
+$user = $sql->fetch();
+
+if (!$user) {
+    header('location: login.php');
+    exit();
+}
+
+
 
 // Are we at the homepage? If not, redirect
 
