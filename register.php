@@ -103,7 +103,7 @@ TMPL;
           <div class="form-group">
             <div class="form-row">
               <div class="col-md-6">
-                <label for="exampleInputPassword1">Password</label>
+                <label for="exampleInputPassword1">Password (8+ chars)</label>
                 <input name="register[password_1]" class="form-control" id="exampleInputPassword1" type="password" placeholder="Password">
               </div>
               <div class="col-md-6">

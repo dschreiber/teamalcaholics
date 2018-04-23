@@ -57,10 +57,15 @@ if ($end - $start > 86400) {
         <!-- RSVP -->
         <hr class="mb-3">
         <div class="card-body py-2 small text-center mb-3">
-            <a class="h3 mr-2 d-inline-block text-primary" href="rsvp.php?event_id=$event[event_id]&rsvp=1">
+            <span class="<?= ($rsvp == 1 ? 'text-primary' : 'text-muted'); ?>">
+            <a class="h3 mr-2 d-inline-block" href="rsvp.php?event_id=<?= $event[event_id]; ?>&rsvp=1">
                     <i class="fa fa-fw fa-thumbs-up"></i>Coming</a>
-            <a class="h3 mr-2 d-inline-block text-muted" href="rsvp.php?event_id=$event[event_id]&rsvp=0">
+            </span>
+            
+            <span class="<?= ($rsvp == 2 ? 'text-primary' : 'text-muted'); ?>">
+            <a class="h3 mr-2 d-inline-block" href="rsvp.php?event_id=<?= $event[event_id]; ?>&rsvp=2">
                 <i class="fa fa-fw fa-thumbs-down"></i>Can't Go</a>
+            </span>
             <br/>
         </div>
 

@@ -29,6 +29,9 @@ foreach ($events as $event) {
         $event_duration = date('D M jS, Y', $start) . '<br>' . date('g:ia', $start) . ' thru ' . date('g:ia', $end);
     }
     
+    $coming = ($rsvps[$event['event_id']] == 1 ? 'text-primary' : 'text-muted');
+    $cant_go = ($rsvps[$event['event_id']] == 2 ? 'text-primary' : 'text-muted');
+
 echo <<<TMPL
         <div class="col-md-6 col-xs-6 mb-3">
             <!-- Event Item -->
@@ -54,10 +57,16 @@ echo <<<TMPL
               <!-- RSVP -->
               <hr class="my-0">
               <div class="card-body py-2 small">
-                <a class="mr-2 d-inline-block text-primary" href="rsvp.php?event_id=$event[event_id]&rsvp=1">
+                <a class="mr-2 d-inline-block" href="rsvp.php?event_id=$event[event_id]&rsvp=1">
+                <span class="$coming">
                   <i class="fa fa-fw fa-thumbs-up"></i>Coming</a>
-                <a class="mr-2 d-inline-block text-muted" href="rsvp.php?event_id=$event[event_id]&rsvp=0">
+                </span>
+        
+                <a class="mr-2 d-inline-block" href="rsvp.php?event_id=$event[event_id]&rsvp=2">
+                <span class="$cant_go">
                   <i class="fa fa-fw fa-thumbs-down"></i>Can't Go</a>
+                </span>
+        
                 <a class="d-inline-block text-muted" href="index.php?section=events&page=detail&event_id=$event[event_id]">
                   <i class="fa fa-fw fa-share"></i>Learn More</a>
               </div>

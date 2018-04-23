@@ -5,51 +5,63 @@ session_start();
 
 include ('db_init.php');
 
-exit();
-
-if (isset($_REQUEST['email']) && isset($_REQUEST['password'])) {
-    $email = $_REQUEST['email'];
-    $password = md5($email . ':' . $_REQUEST['password']);
+if (isset($_REQUEST['event_id']) && isset($_REQUEST['rsvp'])) {
+    $rsvp['event_id'] = $_REQUEST['event_id'];
+    $rsvp['user_id'] = $_SESSION['user_id'];
+    $rsvp['rsvp'] = $_REQUEST['rsvp'];
     
-    // Retrieve current user
-    $sql = $pdo->prepare("SELECT * FROM user WHERE email = ? and password = ?");
-    $sql->execute([$email, $password]);
-    $user = $sql->fetch();
+    // Retrieve existing RSVP
+    $sql = $pdo->prepare("SELECT * FROM event_rsvp WHERE user_id = ? and event_id = ?");
+    $sql->execute([$_SESSION['user_id'], $rsvp['event_id']]);
+    $response = $sql->fetch();
+    
+    if ($response) {
+        // Already have an RSVP, update it!
+        try {
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $result = $pdo->prepare("UPDATE event_rsvp set rsvp_status = :rsvp, rsvp_datetime = now() where user_id = :user_id and event_id = :event_id")->execute($rsvp);
 
-    if (!$user) {
-        header('location: login.php');
-        exit();
-    } else if (!$user['verified']) {
-        echo 'Your account has not been verified by a team member or admin yet. Please try again later.';
-        exit();
+            if ($result) {
+                header('location: index.php?section=events&page=detail&event_id=' . $rsvp['event_id']);
+            } else {
+                $error = "Nope.";
+            }
+
+        } catch (PDOException $e) {
+            $existingkey = "Integrity constraint violation: 1062 Duplicate entry";
+            if (strpos($e->getMessage(), $existingkey) !== FALSE) {
+
+                // Take some action if there is a key constraint violation, i.e. duplicate name
+            } else {
+                throw $e;
+            }
+
+            $error = "Duplicate account. Perhaps you forgot your password?";
+        }
     } else {
-        $_SESSION['user_id'] = $user['user_id'];
-        header('location: index.php');
+        // New response - record it!
+        try {
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $result = $pdo->prepare("INSERT INTO event_rsvp VALUES (NULL,:event_id,:user_id,:rsvp,now())")->execute($rsvp);
+
+            if ($result) {
+                header('location: index.php?section=events&page=detail&event_id=' . $rsvp['event_id']);
+            } else {
+                $error = "Nope.";
+            }
+
+        } catch (PDOException $e) {
+            $existingkey = "Integrity constraint violation: 1062 Duplicate entry";
+            if (strpos($e->getMessage(), $existingkey) !== FALSE) {
+
+                // Take some action if there is a key constraint violation, i.e. duplicate name
+            } else {
+                throw $e;
+            }
+
+            $error = "Duplicate account. Perhaps you forgot your password?";
+        }
+
     }
 
 }
-
-
-
-            try {
-                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $result = $pdo->prepare("INSERT INTO user (create_date, last_login, email, password, first_name, last_name, nickname) VALUES (now(),now(),:email,:password,:first_name,:last_name,:nickname)")->execute($register);
-                
-                if ($result) {
-                    $error = 'You have successfully registered. Please wait for an email from an admin who will manually verify your account.';
-                } else {
-                    $error = "Nope.";
-                }
-                
-            } catch (PDOException $e) {
-                $existingkey = "Integrity constraint violation: 1062 Duplicate entry";
-                if (strpos($e->getMessage(), $existingkey) !== FALSE) {
-
-                    // Take some action if there is a key constraint violation, i.e. duplicate name
-                } else {
-                    throw $e;
-                }
-                
-                $error = "Duplicate account. Perhaps you forgot your password?";
-            }
-
