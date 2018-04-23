@@ -1,4 +1,53 @@
-<!DOCTYPE html>
+<?php
+
+date_default_timezone_set('America/Los_Angeles');
+session_start();
+
+include ('db_init.php');
+
+if (isset($_REQUEST['register'])) {
+    $register = $_REQUEST['register'];
+    if ($register['password_1'] == $register['password_2'] 
+            and (strlen($register['password_1']) >= 8)
+            and (filter_var($register['email'], FILTER_VALIDATE_EMAIL))
+            and (strlen($register['first_name']) >= 2)
+            and (strlen($register['last_name']) >= 2)
+        ) {
+            // Valid registration, let's try it
+            $register['password'] = md5($register['email'] . ':' . $register['password_1']);
+            unset($register['password_1']);
+            unset($register['password_2']);
+            
+            $register['nickname'] = $register['first_name'];
+            
+            try {
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $result = $pdo->prepare("INSERT INTO user (create_date, last_login, email, password, first_name, last_name, nickname) VALUES (now(),now(),:email,:password,:first_name,:last_name,:nickname)")->execute($register);
+                
+                if ($result) {
+                    $error = 'You have successfully registered. Please wait for an email from an admin who will manually verify your account.';
+                } else {
+                    $error = "Nope.";
+                }
+                
+            } catch (PDOException $e) {
+                $existingkey = "Integrity constraint violation: 1062 Duplicate entry";
+                if (strpos($e->getMessage(), $existingkey) !== FALSE) {
+
+                    // Take some action if there is a key constraint violation, i.e. duplicate name
+                } else {
+                    throw $e;
+                }
+                
+                $error = "Duplicate account. Perhaps you forgot your password?";
+            }
+        } else {
+            $error = 'There are errors on the form. Please try again.';
+        }
+
+}
+
+?><!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -19,42 +68,52 @@
 <body class="bg-dark">
   <div class="container">
     <div class="card card-register mx-auto mt-5">
+
+<?php
+if (isset($error)) {
+    echo <<<TMPL
+      <h4 class="text-center mb-3 mt-3">
+          $error;
+      </h4>
+TMPL;
+}
+?>
       <div class="card-header">Register an Account</div>
       <div class="card-body">
-        <form>
+        <form name="register" id="register" type="POST" action="register.php">
           <div class="form-group">
             <div class="form-row">
               <div class="col-md-6">
                 <label for="exampleInputName">First name</label>
-                <input class="form-control" id="exampleInputName" type="text" aria-describedby="nameHelp" placeholder="Enter first name">
+                <input name="register[first_name]" class="form-control" id="exampleInputName" type="text" aria-describedby="nameHelp" placeholder="Enter first name">
               </div>
               <div class="col-md-6">
                 <label for="exampleInputLastName">Last name</label>
-                <input class="form-control" id="exampleInputLastName" type="text" aria-describedby="nameHelp" placeholder="Enter last name">
+                <input name="register[last_name]" class="form-control" id="exampleInputLastName" type="text" aria-describedby="nameHelp" placeholder="Enter last name">
               </div>
             </div>
           </div>
           <div class="form-group">
             <label for="exampleInputEmail1">Email address</label>
-            <input class="form-control" id="exampleInputEmail1" type="email" aria-describedby="emailHelp" placeholder="Enter email">
+            <input name="register[email]" class="form-control" id="exampleInputEmail1" type="email" aria-describedby="emailHelp" placeholder="Enter email">
           </div>
           <div class="form-group">
             <div class="form-row">
               <div class="col-md-6">
                 <label for="exampleInputPassword1">Password</label>
-                <input class="form-control" id="exampleInputPassword1" type="password" placeholder="Password">
+                <input name="register[password_1]" class="form-control" id="exampleInputPassword1" type="password" placeholder="Password">
               </div>
               <div class="col-md-6">
                 <label for="exampleConfirmPassword">Confirm password</label>
-                <input class="form-control" id="exampleConfirmPassword" type="password" placeholder="Confirm password">
+                <input name="register[password_2]" class="form-control" id="exampleConfirmPassword" type="password" placeholder="Confirm password">
               </div>
             </div>
           </div>
-          <a class="btn btn-primary btn-block" href="login.html">Register</a>
+          <a class="btn btn-primary btn-block" href="javascript:void(0);" onclick="$('#register').submit();return false;">Register</a>
         </form>
         <div class="text-center">
-          <a class="d-block small mt-3" href="login.html">Login Page</a>
-          <a class="d-block small" href="forgot-password.html">Forgot Password?</a>
+          <a class="d-block small mt-3" href="login.php">Login Page</a>
+          <a class="d-block small" href="forgot-password.php">Forgot Password?</a>
         </div>
       </div>
     </div>
