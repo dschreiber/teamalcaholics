@@ -1,8 +1,14 @@
 <?php
 
 date_default_timezone_set('America/Los_Angeles');
+session_start();
 
 include ('db_init.php');
+
+if (!$_SESSION['user_id']) {
+    header('location: login.php');
+    exit();
+}
 
 
 // Are we at the homepage? If not, redirect
