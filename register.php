@@ -18,14 +18,17 @@ if (isset($_REQUEST['register'])) {
             unset($register['password_1']);
             unset($register['password_2']);
             
+            $register['email'] = strtolower($register['email']);
             $register['nickname'] = $register['first_name'];
             
             try {
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $result = $pdo->prepare("INSERT INTO user (create_date, last_login, email, password, first_name, last_name, nickname) VALUES (now(),now(),:email,:password,:first_name,:last_name,:nickname)")->execute($register);
+                $result = $pdo->prepare("INSERT INTO user (create_date, last_login, email, password, first_name, last_name, nickname, verified) VALUES (now(),now(),:email,:password,:first_name,:last_name,:nickname,1)")->execute($register);
                 
                 if ($result) {
                     $error = 'You have successfully registered. Please wait for an email from an admin who will manually verify your account.';
+                    header('location: login.php');
+                    exit();
                 } else {
                     $error = "Nope.";
                 }
@@ -73,7 +76,7 @@ if (isset($_REQUEST['register'])) {
 if (isset($error)) {
     echo <<<TMPL
       <h4 class="text-center mb-3 mt-3">
-          $error;
+          $error
       </h4>
 TMPL;
 }
