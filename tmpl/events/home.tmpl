@@ -1,17 +1,23 @@
       <div class="row">
+          
+        <!-- Title Bar -->
         <div class="col-lg-8">
           <!-- Event Listing-->
           <div class="mb-0 mt-0">
             <i class="fa fa-newspaper-o"></i> Upcoming Events</div>
           <hr class="mt-2">
+        </div>
 
-          <div class="card-deck">
-              <div class="row">
+        <!-- Start of larger event listing area -->
+        <div class="col-lg-8">
+            <div class="container">
+                <div class="row">
               
 <?php
 
+// Cycle through each event, printing them
 foreach ($events as $event) {
-    $count++;
+    // Make friendly start/end date/times
     $start = strtotime($event['event_start']);
     $end = strtotime($event['event_end']);
     $duration = $end - $start;
@@ -24,14 +30,15 @@ foreach ($events as $event) {
     }
     
 echo <<<TMPL
+        <div class="col-md-6 col-xs-6 mb-3">
             <!-- Event Item -->
-            <div class="card mb-3">
+            <div class="card">
               <a href="#">
                 <img class="card-img-top w-100" src="images.php?event_id=$event[event_id]" alt="" height="140px">
               </a>
               <div class="card-body">
                 <h6 class="card-title mb-1">
-                    <a href="#">$event[event_name]</a>
+                    <a href="index.php?section=events&page=detail&event_id=$event[event_id]">$event[event_name]</a>
                 </h6>
                 <p class="card-text small">
                     $event[event_short_description]
@@ -47,46 +54,28 @@ echo <<<TMPL
               <!-- RSVP -->
               <hr class="my-0">
               <div class="card-body py-2 small">
-                <a class="mr-3 d-inline-block text-primary" href="#">
+                <a class="mr-2 d-inline-block text-primary" href="rsvp.php?event_id=$event[event_id]&rsvp=1">
                   <i class="fa fa-fw fa-thumbs-up"></i>Coming</a>
-                <a class="mr-3 d-inline-block text-muted" href="#">
+                <a class="mr-2 d-inline-block text-muted" href="rsvp.php?event_id=$event[event_id]&rsvp=0">
                   <i class="fa fa-fw fa-thumbs-down"></i>Can't Go</a>
-                <a class="d-inline-block text-muted" href="#">
+                <a class="d-inline-block text-muted" href="index.php?section=events&page=detail&event_id=$event[event_id]">
                   <i class="fa fa-fw fa-share"></i>Learn More</a>
               </div>
 
-              <div class="card-footer small text-muted">Posted 32 mins ago</div>
+              <div class="card-footer small text-muted">Cost: $$event[event_cost]</div>
             </div>
-
-TMPL;
-
-    if ($count % 2 == 0) {
-        echo <<<TMPL
         </div>
-        <div class="row">
+
 TMPL;
-    }
+
 }
 
-if ($count % 2 != 0) {
-    echo <<<TMPL
-            <div class="card mb-3">
-              <div class="card-body">
-
-   &nbsp;
-    </div>
-</div>    
-TMPL;
-}
 
 ?>
 
+                </div>
+            </div>
 
-              </div>
-              
-
-          </div>
-          <!-- /Card Deck-->
         </div>
 
         <div class="col-lg-4">
@@ -127,6 +116,7 @@ TMPL;
                 
 
               <!--<a class="list-group-item list-group-item-action" href="#">Download Calendar...</a>-->
+              <hr>
             </div>
             <!--<div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>-->
           </div>

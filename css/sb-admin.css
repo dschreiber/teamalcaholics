@@ -476,3 +476,8 @@ footer.sticky-footer {
     width: calc(100% - 55px);
   }
 }
+
+.row > div[class*='col-'] {
+  display: flex;
+  flex:1 0 auto;
+}
