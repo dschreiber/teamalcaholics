@@ -65,17 +65,37 @@ if ($end - $start > 86400) {
         </div>
 
         <div class="card-footer small text-muted">
-            This event costs $<?= $event[event_cost]; ?>. You have made the following payments toward this event:<br/>
+            This event costs $<?= $event[event_cost]; ?>.
+            
+<?php
+
+if ($event[event_cost] == 0) {
+    echo '<p style="display:none">';
+}
+
+?>
+            
+            You have made the following payments toward this event:<br/>
             <br/>
             <b>No payments.</b></br>
             
             <br/>
             If you'd like to participate in this event, please remit payment no later than <?= date('D M jS, Y g:ia', strtotime($event[register_end])); ?>.
-            Use: <a href='#'>Paypal</a> or <a href='#'>Venmo</a><br/><br/>
+            Use: <a href="http://paypal.me/alcaholics/<?= $event['event_cost']; ?>" target="_blank">Paypal</a> or <a href="http://www.venmo.com/DarrenSchreiber" target="_blank">Venmo</a><br/><br/>
             <br/>
             Payments can take up to 72 hours to post.
             <br/>
             <br/>
+
+<?php
+
+if ($event[event_cost] == 0) {
+    echo '</p>';
+}
+
+?>
+            
+
         </div>
 
 
